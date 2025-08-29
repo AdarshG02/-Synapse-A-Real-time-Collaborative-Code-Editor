@@ -3,7 +3,13 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+//Importing Schema
+import User from '../Models/user.models.js';
+
 const router = express.Router();
+
+
+
 //Login route/page
 router.post('/login', async(req, res) => {
     try{
@@ -39,15 +45,34 @@ router.post('/login', async(req, res) => {
 
 
     //Signup route
-    router.post('/signup', (req, res) => {
+    router.post('/signup', async (req, res) => {
         try{
-            const {username, password} = req.body;
+            const {username, password, email} = req.body;
 
             //A very basic validation
-            if(!username || !password)
+            if(!username || !password || !email)
                 return res.status(400).json({ message: "Username and password are required" });
+            
+            if(await User.findOne({ username }))
+                return res.status(400).json({ message: "Username already taken" });
 
+            if(await User.findOne({ email }))
+                return res.status(400).json({ message: "Already a member" });
+            
+            // Hashing the password
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            //Creating new user if everything else is fine
+            const newUser = new User({
+                username,
+                password: hashedPassword,
+                email
+            });
+            
+            await newUser.save();
+            
             res.status(201).json({message: "User signed up successfully", user: {username}});
+
         } catch(error){
             console.error("Signup error:", error);
             res.status(500).json({message: "Server error"});
