@@ -3,27 +3,39 @@ dotenv.config({path: './env'});
 
 
 import express from 'express';
-import authRoutes from './Routes/auth.js';
+const app = express();
 
 import cors from 'cors';
-
 
 import connectDB from './DB/index.js';
 connectDB(); //Database connection
 
-const app = express();
+
+
+//Routes importing
+import authRoutes from './Routes/auth.js';
+import homeRoute from './Routes/home.js';
+
+//Socket related stuffs
+import setupSocket from "./socket/editor.socket.js";
+import { createServer } from 'node:http';
+
+const server = createServer(app);
+const io = new setupSocket(server);
+
+
 const port = process.env.PORT || 3000;
 
 //Middleware and cors
 app.use(cors());
 app.use(express.json());
 
-//Landing page
-app.get('/synapse', (req, res) =>{
-    res.send("Landing Page. Login or signup");
-});
 
-app.use("/synapse", authRoutes);
+//Login or Signup page
+app.use('/synapse', authRoutes);
+
+//Home page
+app.use('/synapse/home', homeRoute);
 
 
 app.listen(port, () => {

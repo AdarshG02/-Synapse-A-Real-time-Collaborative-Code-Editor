@@ -36,6 +36,9 @@ router.post('/login', async(req, res) => {
         );
     
         res.json({ message: "Login successful", token});
+
+        //After developing React+Vite frontend, this part 👇 needs heavy modifications. Not clear now but beware to change it after developing the frontend.
+        //res.redirect('/synapse/home');
     
     } catch(error){
         console.error("Login error:", error);

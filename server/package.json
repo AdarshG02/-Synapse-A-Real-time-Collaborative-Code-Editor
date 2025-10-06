@@ -12,6 +12,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
     "object-assign": "^4.1.1",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.1.0",
     "vary": "^1.1.2"
   },
   "scripts": {
